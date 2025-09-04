@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<!-- Popper JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.14/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.14/jspdf.plugin.autotable.js"></script>
+
+ <script src="http://code.jquery.com/jquery-latest.js"></script>
+ <script src="jsPDF-1.3.2/dist/jspdf.min.js"></script>
+ <script src="jspdf.plugin.autotable.min.js"></script>
+ <script src="https://momentjs.com/downloads/moment.js"></script>
+ <script src="https://momentjs.com/downloads/moment-with-locales.min.js"></script>
+
+    <script type="text/javascript">
+
+var fformat=null;
+var vencimiento=null;
+
+
+    	function obtenerFecha(e)
+{
+	moment.locale('es-mx');
+  var fecha = moment(e.value);
+  fformat=fecha.format("DD/MM/YYYY");
+
+ 	vencimiento=moment().add(30, 'days').calendar(); 
+ 	
+ 	
+
+  console.log("Fecha original:" + e.value);
+  console.log("Fecha formateada es: " + fecha.format("DD/MM/YYYY"));
+}
+var fNumber = {
+sepMil: ",", // separador para los miles
+sepDec: '.', // separador para los decimales
+formatear:function (num){
+num +='';
+var splitStr = num.split('.');
+var splitLeft = splitStr[0];
+var splitRight = splitStr.length > 1 ? this.sepDec + splitStr[1] : '';
+var regx = /(\d+)(\d{3})/;
+while (regx.test(splitLeft)) {
+splitLeft = splitLeft.replace(regx, '$1' + this.sepMil + '$2');
+}
+return this.simbol + splitLeft + splitRight;
+},
+go:function(num, simbol){
+this.simbol = simbol ||'';
+return this.formatear(num);
+}
+}
+
+function selectCliente(cliente){
+
+  console.log("Actualizando datos",cliente.value);
+  
+
+  if(cliente.value=="NEWCALGÓN, S.A DE C.V."){
+    //document.getElementById("cliente").value='GLASSIA, S.A. DE C.V.';
+    document.getElementById("direccion").value='Av. México No. 700-111 San Jerónimo Lidice. Magdalena Contreras. Ciudad de México.';
+
+  }else {
+     //document.getElementById("cliente").value='EMBOTELLADORA “LAS MARGARITAS”, S.A.P.I. DE C.V.';
+     document.getElementById("direccion").value='Camino a Pozos Telles KM. 1.5 C.P.42186. Pachuca de Soto,HGO.';
+
+  }
+
+
+}
+
+    	var jproduct= null;
+    	var jprecio= null;
+    	var jcantidad= null;
+
+
+
+   function agregarFila(){
+   		jproduct= document.getElementById("prod").value;
+    	jprecio= document.getElementById("pUnitario").value;
+    	jcantidad= document.getElementById("cantidad").value;
+    	jtotalprod=parseFloat(jprecio*jcantidad).toFixed(2);
+
+  document.getElementById("tablaprueba").insertRow(-1).innerHTML = '<td>'+jproduct+'</td><td>'+jcantidad+'</td><td>$</td><td>'+parseFloat(jprecio).toFixed(2)+'</td><td>$</td><td class="sumTotal">'+jtotalprod+'</td>';
+
+  var data = [];
+
+$("td.sumTotal").each(function(){
+  data.push(parseFloat($(this).text()));
+});
+
+
+var suma = data.reduce(function(a,b){ return a+b; },0);
+var sumafloat=parseFloat(suma).toFixed(2);
+ 
+console.log(data);
+console.log(sumafloat);
+
+document.getElementById("subtotal").innerHTML= fNumber.go(sumafloat);
+
+var impuesto = ((16 * sumafloat)/100);
+
+impuesto=parseFloat(impuesto).toFixed(2);
+document.getElementById("impuesto").innerHTML= fNumber.go(impuesto);
+
+var toto= Number.parseFloat(sumafloat) + Number.parseFloat(impuesto);
+console.log(toto);
+toto=parseFloat(toto).toFixed(2);
+
+document.getElementById("total").innerHTML= '$'+fNumber.go(toto);
+
+
+}
+
+
+function eliminarFila(){
+  var table = document.getElementById("tablaprueba");
+  var rowCount = table.rows.length;
+  //console.log(rowCount);
+  
+  if(rowCount <= 1)
+    alert('No se puede eliminar el encabezado');
+  else
+    table.deleteRow(rowCount -1);
+}
+
+
+
+function crearPDF() {
+
+  var admin= document.getElementById("admin").value;
+	var folio= document.getElementById("folio").value;
+	var empresa= document.getElementById("cliente").value;
+	var direccionemp= document.getElementById("direccion").value;
+	var nombrecliente= document.getElementById("nombre").value;
+
+            
+
+            var doc = new jsPDF();
+            // source can be HTML-formatted string, or a reference
+            // to an actual DOM element from which the text will be scraped.
+              
+            var logo = new Image();
+            var marca= new Image();
+
+logo.src = 'images/pruebas.jpg';
+doc.addImage(logo, 'JPEG', 15, 10,26,26);
+
+marca.src='images/marca2.jpg';
+
+doc.addImage(marca, 'JPEG', 20, 100,170,170);
+
+			doc.setFontType('bold');
+               doc.setFontSize(11);
+	doc.text(40,20,'MANTENIMIENTO INDUSTRIAL\rY DE EDIFICIOS' );
+  if(admin==0){
+	doc.setFontType('normal');
+	doc.setFontSize(10);
+
+	doc.text(20,35,'Priv. Real Chico 116. Fracc. Real de Pachuca,\rPachuca, Hgo. Cp. 42083\rTelefonos: 7713207434\rCorreo: emproyal@hotmail.com\rRogelio Ponce Estrada\rRFC: POER661021IK9');
+}//else{
+  //doc.setFontType('normal');
+ // doc.setFontSize(10);
+
+ // doc.text(20,35,'Priv. Real Chico 25. Fracc. Real de Pachuca,\rHidalgo, Hgo. Cp. 42083\rTelefonos: 7713207434\rCorreo: emproyal@hotmail.com\rLuisa Vanessa Herrera Cañas\rRFC: HECL 771209 IQA');
+
+//}
+	doc.setFontType('bold');
+	doc.setFontSize(11);
+	doc.text(140,20,'COTIZACIÓN');
+	doc.setFontType('normal');
+	doc.setFontSize(10);
+	doc.text(140,35,'Fecha: '+fformat+'\rFolio: '+folio+'\rValido hasta:'+vencimiento);
+	doc.setFontType('bold');
+	doc.setFontSize(11);
+	doc.text(20,70,'CLIENTE:');
+	doc.setFontType('normal');
+	doc.setFontSize(10);
+	doc.text(20,75, empresa+'\r'+direccionemp+'\rNombre: '+nombrecliente);
+	doc.setFontSize(11);
+	doc.setFontType('bold');
+	doc.text(20,90, 'DESCRIPCIÓN:');
+	
+	   	
+          doc.autoTable({ html: '#tablaprueba', theme: 'plain', startY: 95, styles: {
+      lineColor: [178, 186, 187],
+      lineWidth: 0.08,
+    }, headStyles: { fillColor: [255, 140, 0]},}) 
+          
+          doc.autoTable({html: '#resultados', theme: 'plain',styles: { lineColor: [178, 186, 187],
+      lineWidth: 0.08, overflow: 'hidden', halign: 'right'},margin: { left: 140 }}) 
+        
+          doc.autoTable({head: [['Vigencia:']],
+    body: [
+      ['Esta cotización tiene una\rvigencia de 30 dias']], styles: { lineColor: [178, 186, 187],
+      lineWidth: 0.08, overflow: 'hidden' },margin: { right: 140 }, theme:'plain', headStyles: { fillColor: [255, 140, 0]}})
+
+            doc.save('Cotización - '+folio+'.pdf');
+            doc.output('dataurlnewwindow');
+        }
+
+        function limpiar(){
+
+        	document.getElementById("prod").value = "";
+        	document.getElementById("pUnitario").value = "";
+        	document.getElementById("cantidad").value = "";
+
+
+
+        }
+
+
+
+
+
+
+    </script>
+
+	<title>Nueva Cotización</title>
+</head>
+<body>
+	<nav class="navbar navbar-light" style="background-color: #ffa726;">
+  <a class="navbar-brand" href="#">
+    <img  id="img" src="images/pruebas.jpg" width="80" height="80" class="rounded-circle" alt="foto">
+    Mantenimiento Industrial y de Edificios
+  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <!-- Navbar links -->
+  <div class="collapse navbar-collapse" id="collapsibleNavbar">
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" href="index.html">Crear nueva cotizacion</a>
+      </li>
+    
+    </ul>
+  </div>
+</nav>
+<br>
+<img  id="img" src="images/marca2.jpg" width="1" height="1" class="rounded-circle" alt="foto2">
+<div class="container">
+
+
+<div class="card" style="background-color: #e65100;">
+	<div class="card-header">
+	<h4>Nueva cotización</h4>
+	</div>
+
+</div>
+<div class="card">
+	<div class="card-body">
+	<form id="form1" method="get" action="">
+    <div class="row">
+	<div class="col-sm-2">
+
+      <label>Administrador:  </label>
+       <select class="form-control" id="admin" required>
+
+      <option >Selecciona Administrador</option>
+      <option value="0">Rogelio</option>
+      <!--<option value="1">Vanessa</option>
+      -->
+    </select>
+    </div>
+  </div>
+	<div class="row">
+		<div class="col-sm-2">
+			<label>Folio: </label>
+			<input type="text" id="folio" class="form-control" required>
+		</div>
+		<div class="col-sm-3">
+		<label>Fecha: </label>
+		<input type="date" id="fecha" name="fecha" class="form-control" onchange="obtenerFecha(this)" required>
+		</div>
+		<div class="col-sm-6">
+		<label>Cliente: </label>
+		<select type="text" id="cliente" class="form-control" onchange="selectCliente(this)" required>
+     		<option >Selecciona Cliente</option>
+     		<option id="emp1" value="NEWCALGÓN, S.A DE C.V.">NEWCALGÓN, S.A DE C.V.</option>
+     		<option id="emp2" value="EMBOTELLADORA “LAS MARGARITAS”, S.A.P.I. DE C.V.">EMBOTELLADORA “LAS MARGARITAS”, S.A.P.I. DE C.V.</option>
+ 		</select>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="col-sm-6">
+		<label>Direccion: </label>
+		<input type="text" id="direccion" class="form-control" value="" required>
+		</div>
+		<div class="col-sm-6">
+		<label>Nombre: </label>
+		<input type="text" id="nombre" class="form-control" required>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="col-sm-6">
+		<label>Agregar producto: </label>
+		<input type="text" name="producto" id="prod" class="form-control">
+	</div>
+	<div class="col-sm-3">
+		<label>Precio Unitario ($): </label>
+		<input type="text" id="pUnitario" class="form-control">
+	</div>
+	<div class="col-sm-3">
+		<label>Cantidad: </label>
+		<input type="number" id="cantidad" class="form-control">
+	</div class= row>
+		<div class="col-sm-3">
+		<br>
+		<button id="add" type="button" class="btn btn-success" onclick="agregarFila()">Agregar producto</button>
+		</div>
+		<div class="col-sm-3">
+		<br>
+		<button id="elim" type="button" class="btn btn-danger" onclick="eliminarFila()">Eliminar producto</button>
+		</div>
+		<div class="col-sm-3">
+		<br>
+		<button id="limp" type="button" class="btn btn-primary" onclick="limpiar()">Limpiar campos</button>
+		</div>
+	</div>
+	
+	</form>
+</div>
+</div>
+<br>
+
+<div class="card">
+<div class="card-body" >
+<div id="tabla">
+	<table id="tablaprueba" class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Servicio/Producto</th>
+        <th>Cantidad</th>
+        <th></th>
+        <th>Precio Unidad </th>
+        <th></th>
+        <th >Total </th>
+
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+     
+
+    </tbody>
+
+  </table>
+</div>
+  <div class="row">
+  	<div class="col-sm-9"></div>
+  	<div class="col-sm-3">
+  <table id="resultados" class="table table-bordered" >
+  	<thead>
+  		
+  	</thead>
+  	<tbody>
+  		<tr>
+  		<th>Subtotal:</th>
+      	<td id="subtotal"></td>	
+  		</tr>
+  		<tr>
+  		<th >+ 16 % de IVA:</th>
+      	<td id="impuesto" step=".01"></td>	
+  		</tr>
+  		<tr>
+  		<th>Total:</th>
+      	<td id="total" step=".01"></td>	
+  		</tr>
+  	</tbody>
+  </table>
+</div>
+</div>
+</div>
+</div>
+<br>
+<div class="row">
+<div class="col-3 align-self-end">
+	
+<div class="card bg-warning text-dark">
+
+	<div class="card-header text-center"> Vigencia de la cotizacion </div>
+    <div class="card-body text-center text-dark">30 días</div>
+  </div>
+
+</div>
+
+<button type="submit" class="btn float-rigth" style="background-color:#f44336;" onclick="crearPDF()"><i class="bi bi-file-arrow-down"> Descargar PDF</i></button>
+<button type="submit" class="btn float-primary" ><a href="#">Crear nueva cotizacion</a></button>
+</div>
+</div>
+<br>
+<!-- Footer -->
+<footer class=" text-center text-lg-start" style="background-color: #ffa726;">
+  <!-- Grid container -->
+  <div class="container p-4">
+    <!--Grid row-->
+    <div class="row">
+      <!--Grid column-->
+      <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+        <h5 class="text-uppercase">Mantenimiento Industrial y de Edificios</h5>
+        <h6 class="text-uppercase">Contacto: </h6>
+        <ul class="list-unstyled mb-0 text-left">
+        	<li>
+        		<i class="bi bi-person-fill"> Rogelio Ponce Estrada</i>
+        	</li>
+        	<i class="bi bi-card-heading"> RFC: POER 661021 IK9 </i>
+        <li>
+        <i class="bi bi-geo-alt-fill"> Priv. Real del Chico 116. Fracc. Real de Pachuca, Pachuca, Hgo. Cp. 42083</i>
+        </li>
+        <li>
+        <i class="bi bi-telephone-fill"> 7713207434</i>
+        </li>
+        <li>
+        <i class="bi bi-envelope-fill"> rogelio6610@outlook.com</i>
+    </li>
+    </ul>
+      </div>
+      
+      
+    </div>
+    <!--Grid row-->
+  </div>
+  <!-- Grid container -->
+
+  <!-- Copyright -->
+  <div class="text-center p-3" style="background-color:#e65100;">
+    © 2022 Copyright:
+    <a class="text-dark" href="#">CotiSystem</a>
+  </div>
+  <!-- Copyright -->
+</footer>
+<!-- Footer -->
+</body>
+</html>
