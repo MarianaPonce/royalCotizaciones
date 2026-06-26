@@ -249,6 +249,30 @@ doc.addImage(marca, 'JPEG', 20, 100, 170, 170);
 
         }
 
+        function nuevaCotizacion(){
+        	// Limpiar campos del formulario
+        	document.getElementById("admin").value = "Selecciona Administrador";
+        	document.getElementById("folio").value = "";
+        	document.getElementById("fecha").value = "";
+        	document.getElementById("cliente").value = "Selecciona Cliente";
+        	document.getElementById("direccion").value = "";
+        	document.getElementById("nombre").value = "";
+        	document.getElementById("prod").value = "";
+        	document.getElementById("pUnitario").value = "";
+        	document.getElementById("cantidad").value = "";
+        	
+        	// Limpiar la tabla de productos - mantener la estructura original
+        	var tbody = document.getElementById("tablaprueba").getElementsByTagName('tbody')[0];
+        	while(tbody.rows.length > 1) {
+        		tbody.deleteRow(1);
+        	}
+        	
+        	// Limpiar los totales
+        	document.getElementById("subtotal").innerHTML = "";
+        	document.getElementById("impuesto").innerHTML = "";
+        	document.getElementById("total").innerHTML = "";
+        }
+
 
 
 
@@ -272,7 +296,7 @@ doc.addImage(marca, 'JPEG', 20, 100, 170, 170);
   <div class="collapse navbar-collapse" id="collapsibleNavbar">
     <ul class="navbar-nav">
       <li class="nav-item">
-        <a class="nav-link" href="index.html">Crear nueva cotizacion</a>
+        <a class="nav-link" href="#" onclick="nuevaCotizacion()">Crear nueva cotizacion</a>
       </li>
     
     </ul>
@@ -436,7 +460,7 @@ doc.addImage(marca, 'JPEG', 20, 100, 170, 170);
 </div>
 
 <button type="submit" class="btn float-rigth" style="background-color:#f44336;" onclick="crearPDF()"><i class="bi bi-file-arrow-down"> Descargar PDF</i></button>
-<button type="submit" class="btn float-primary" ><a href="#">Crear nueva cotizacion</a></button>
+<button type="button" class="btn float-primary" onclick="nuevaCotizacion()">Crear nueva cotizacion</button>
 </div>
 </div>
 <br>
