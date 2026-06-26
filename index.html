@@ -99,7 +99,13 @@ function selectCliente(cliente){
 
 
 
-   function agregarFila(){ jproduct= document.getElementById("prod").value; jprecio= document.getElementById("pUnitario").value; jcantidad= document.getElementById("cantidad").value; jtotalprod=parseFloat(jprecio*jcantidad).toFixed(2); document.getElementById("tablaprueba").insertRow(-1).innerHTML = '<td>'+jproduct+'</td><td>'+jcantidad+'</td><td>$</td><td>'+parseFloat(jprecio).toFixed(2)+'</td><td>$</td><td class="sumTotal">'+jtotalprod+'</td>';prueba").insertRow(-1).innerHTML = '<td>'+jproduct+'</td><td>'+jcantidad+'</td><td>$</td><td>'+parseFloat(jprecio).toFixed(2)+'</td><td>$</td><td class="sumTotal">'+jtotalprod+'</td>';
+   function agregarFila(){
+   		jproduct= document.getElementById("prod").value;
+    	jprecio= document.getElementById("pUnitario").value;
+    	jcantidad= document.getElementById("cantidad").value;
+    	jtotalprod=parseFloat(jprecio*jcantidad).toFixed(2);
+
+  document.getElementById("tablaprueba").insertRow(-1).innerHTML = '<td>'+jproduct+'</td><td>'+jcantidad+'</td><td>$</td><td>'+parseFloat(jprecio).toFixed(2)+'</td><td>$</td><td class="sumTotal">'+jtotalprod+'</td>';
 
   var data = [];
 
