@@ -108,6 +108,7 @@ function selectCliente(cliente){
   document.getElementById("tablaprueba").insertRow(-1).innerHTML = '<td>'+jproduct+'</td><td>'+jcantidad+'</td><td>$</td><td>'+parseFloat(jprecio).toFixed(2)+'</td><td>$</td><td class="sumTotal">'+jtotalprod+'</td>';
 
   var data = [];
+   }
 
 $("td.sumTotal").each(function(){
   data.push(parseFloat($(this).text()));
