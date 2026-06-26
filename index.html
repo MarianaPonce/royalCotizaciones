@@ -15,12 +15,13 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <style>
     #prod {
-        height: 180px;
+        height: 140px;
         resize: none;
         overflow-y: auto; /* Muestra scroll vertical cuando sea necesario */
     }
 	    #tablaprueba td {
-        white-space: pre-line;
+        white-space: pre-wrap;
+        word-break: break-word;
     }
 </style>
 
@@ -105,36 +106,33 @@ function selectCliente(cliente){
     	jcantidad= document.getElementById("cantidad").value;
     	jtotalprod=parseFloat(jprecio*jcantidad).toFixed(2);
 
-  document.getElementById("tablaprueba").insertRow(-1).innerHTML = '<td>'+jproduct+'</td><td>'+jcantidad+'</td><td>$</td><td>'+parseFloat(jprecio).toFixed(2)+'</td><td>$</td><td class="sumTotal">'+jtotalprod+'</td>';
+  var productoFormato = jproduct.replace(/\n/g, '<br>');
+  document.getElementById("tablaprueba").insertRow(-1).innerHTML = '<td>'+productoFormato+'</td><td>'+jcantidad+'</td><td>$</td><td>'+parseFloat(jprecio).toFixed(2)+'</td><td>$</td><td class="sumTotal">'+jtotalprod+'</td>';
 
   var data = [];
-   }
 
-$("td.sumTotal").each(function(){
-  data.push(parseFloat($(this).text()));
-});
+  $("td.sumTotal").each(function(){
+    data.push(parseFloat($(this).text()));
+  });
 
+  var suma = data.reduce(function(a,b){ return a+b; },0);
+  var sumafloat=parseFloat(suma).toFixed(2);
+   
+  console.log(data);
+  console.log(sumafloat);
 
-var suma = data.reduce(function(a,b){ return a+b; },0);
-var sumafloat=parseFloat(suma).toFixed(2);
- 
-console.log(data);
-console.log(sumafloat);
+  document.getElementById("subtotal").innerHTML= fNumber.go(sumafloat);
 
-document.getElementById("subtotal").innerHTML= fNumber.go(sumafloat);
+  var impuesto = ((16 * sumafloat)/100);
 
-var impuesto = ((16 * sumafloat)/100);
+  impuesto=parseFloat(impuesto).toFixed(2);
+  document.getElementById("impuesto").innerHTML= fNumber.go(impuesto);
 
-impuesto=parseFloat(impuesto).toFixed(2);
-document.getElementById("impuesto").innerHTML= fNumber.go(impuesto);
+  var toto= Number.parseFloat(sumafloat) + Number.parseFloat(impuesto);
+  console.log(toto);
+  toto=parseFloat(toto).toFixed(2);
 
-var toto= Number.parseFloat(sumafloat) + Number.parseFloat(impuesto);
-console.log(toto);
-toto=parseFloat(toto).toFixed(2);
-
-document.getElementById("total").innerHTML= '$'+fNumber.go(toto);
-
-
+  document.getElementById("total").innerHTML= '$'+fNumber.go(toto);
 }
 
 
@@ -172,9 +170,8 @@ logo.src = 'images/pruebas.jpg';
 doc.addImage(logo, 'JPEG', 15, 10,26,26);
 
 marca.src='images/marca2.jpg';
-
-doc.addImage(marca, 'JPEG', 20, 100,170,170);
-
+ 
+doc.addImage(marca, 'JPEG', 20, 100, 170, 170);
 			doc.setFontType('bold');
                doc.setFontSize(11);
 	doc.text(40,20,'MANTENIMIENTO INDUSTRIAL\rY DE EDIFICIOS' );
@@ -224,6 +221,9 @@ doc.addImage(marca, 'JPEG', 20, 100,170,170);
                 t.replace(/<br\s*\/?>/gi, '\n')
             );
         }
+    },
+    willDrawPage: function (data) {
+      doc.addImage(marca, 'JPEG', 20, 100, 170, 170);
     }
 });
           
