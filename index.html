@@ -100,7 +100,7 @@ function selectCliente(cliente){
 
 
    function agregarFila(){
-   		jproduct= document.getElementById("prod").value;
+   		jproduct = document.getElementById("prod").value.replace(/\n/g, "<br>");
     	jprecio= document.getElementById("pUnitario").value;
     	jcantidad= document.getElementById("cantidad").value;
     	jtotalprod=parseFloat(jprecio*jcantidad).toFixed(2);
@@ -206,10 +206,25 @@ doc.addImage(marca, 'JPEG', 20, 100,170,170);
 	doc.text(20,90, 'DESCRIPCIÓN:');
 	
 	   	
-          doc.autoTable({ html: '#tablaprueba', theme: 'plain', startY: 95, styles: {
-      lineColor: [178, 186, 187],
-      lineWidth: 0.08,
-    }, headStyles: { fillColor: [255, 140, 0]},}) 
+
+	doc.autoTable({
+    html: '#tablaprueba',
+    theme: 'plain',
+    startY: 95,
+    styles: {
+        overflow: 'linebreak',
+		lineColor: [178, 186, 187],
+      lineWidth: 0.08
+    },
+	headStyles: { fillColor: [255, 140, 0]},
+    didParseCell: function (data) {
+        if (data.section === 'body') {
+            data.cell.text = data.cell.text.map(t =>
+                t.replace(/<br\s*\/?>/gi, '\n')
+            );
+        }
+    }
+});
           
           doc.autoTable({html: '#resultados', theme: 'plain',styles: { lineColor: [178, 186, 187],
       lineWidth: 0.08, overflow: 'hidden', halign: 'right'},margin: { left: 140 }}) 
